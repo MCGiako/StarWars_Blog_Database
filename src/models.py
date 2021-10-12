@@ -8,23 +8,48 @@ from eralchemy import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
+class Personaje(Base):
+    __tablename__ = 'personaje'
+    # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    uid = Column(Integer, primary_key=True)
+    nombre = Column(String(50), nullable=False)
+    altura = Column(Integer)
+    sexo = Column(String(250))
+    planetanatal =  Column(Integer, ForeignKey('planeta.nombre'))  
 
-class Address(Base):
-    __tablename__ = 'address'
+class Planeta(Base):
+    __tablename__ = 'planeta'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    nombre = Column(String(50), nullable=False)
+    diametro = Column(Integer)
+    poblacion = Column(Integer)
+    clima = Column(String(100))
+    vinculoPersonaje = relationship("Personaje")
+
+class Vehiculo(Base):
+    __tablename__ = 'vehiculo'
+    piloto_uid = Column(Integer, primary_key=True)
+    nombre = Column(String(80), ForeignKey('personaje.nombre'), nullable=False)
+    vinculoVehiculo = relationship("Personaje")
+
+class Favoritos(Base):
+    __tablename__ = 'favoritos'
+    id = Column(Integer, primary_key=True)
+    personaje = Column(String(50), ForeignKey('personaje.nombre'))
+    planeta = Column(String(50),ForeignKey('planeta.nombre'))
+    vehiculo = Column(String(50),ForeignKey('vehiculo.nombre'))
+
+class Usuario(Base):
+    __tablename__ = 'usuario'
+    id = Column(Integer, primary_key=True)
+    usuario_nombre = Column(String(50),ForeignKey('favoritos'))
+    contraseña = Column(String(50))
+    vinculoUsuario = relationship("Favoritos")
+
+   
 
     def to_dict(self):
         return {}
